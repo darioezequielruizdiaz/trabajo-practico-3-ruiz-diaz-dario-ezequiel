@@ -1,0 +1,11 @@
+input {
+    outline: none;
+}
+
+.main-nav:focus {
+    border: none;
+}
+
+.btn-search {
+    border-radius: 100px;
+}

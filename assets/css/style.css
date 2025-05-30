@@ -46,3 +46,133 @@ body::before {
 .main-alert.hide {
   opacity: 0;
 }
+
+
+
+
+.card {
+  display: flex;
+  flex-direction: column;
+  height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #1e1e1e;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  position: relative;
+  color: #f0f0f0;
+}
+
+/* Fondo planeta con filtro para opacar */
+.card.planet-background {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  filter: brightness(0.25);
+}
+
+/* Overlay oscuro para que el texto y la imagen resalten */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(30,30,30,0.8) 0%, rgba(30,30,30,0.95) 100%);
+  pointer-events: none;
+  border-radius: 12px;
+  z-index: 1;
+}
+
+/* El contenido real debe estar sobre el overlay */
+.card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Resto de estilos previos para imagen y texto */
+
+.card-img-container {
+  height: 160px;
+  overflow: hidden;
+  position: relative;
+}
+
+
+.card-img-top {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    object-position: center top;
+    transition: transform 0.3s ease;
+    mask-image: linear-gradient(
+        black 80%,
+        transparent
+    );
+}
+
+.card:hover .card-img-top {
+  transform: scale(1.1);
+}
+
+
+
+
+.card-body {
+  flex: 1 1 auto;
+  padding: 15px 20px;
+  text-align: center;
+  font-family: 'Segoe UI Black', Tahoma, Geneva, Verdana, sans-serif;
+  /* Hacemos el texto un poco más grande y con sombra */
+  color: #ffdd57;
+  text-shadow:
+     0 0 5px #ffdd57,
+     0 0 10px #ffdd57,
+     0 0 20px #ffb700,
+     0 0 30px #ffb700;
+     z-index: 2;
+}
+
+.card-title {
+  font-weight: 900;
+  font-size: 1.6rem;
+  margin-bottom: 0.3rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.card-text {
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.85;
+  font-style: italic;
+  letter-spacing: 1.5px;
+  text-shadow:
+     0 0 4px #ffd966,
+     0 0 8px #ffcc00;
+}
+
+
+.saiyan {
+  background: linear-gradient(135deg, #6b3e26, #d2996e);
+}
+
+.human {
+  background: linear-gradient(135deg, #3b4a6b, #6e8fd2);
+  color: red;
+}
+
+.namekian {
+  background: linear-gradient(135deg, #2e6b39, #6ed299);
+}
+
+.android {
+  background: linear-gradient(135deg, #6b263e, #d26e99);
+}
+
+.frieza-race {
+  background: linear-gradient(135deg, #6b3e6b, #d299d2);
+}
+
+.race-unknown {
+  background: linear-gradient(135deg, #444444, #777777);
+}

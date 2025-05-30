@@ -1,12 +1,29 @@
 const API = "https://dragonball-api.com/api/characters?name="
+const API_BASE = 'https://dragonball-api.com/api/characters';
 
 const searchBtn = document.getElementById('searchBtn');
+const resetBtn = document.getElementById('resetBtn');
 const searchInput = document.getElementById('searchInput');
-const resultsContainer = document.getElementById('results');
+const container = document.getElementById('charactersContainer');
+
+let currentPage = 1;
+let isLoading = false;
+let isLastPage = false;
+
+
+resetBtn.addEventListener('click', async () => {
+    container.innerHTML = ''; // Limpia resultados previos
+
+    currentPage = 1;
+    isLoading = false;
+    isLastPage = false;
+
+    await getAllCharacters();
+});
 
 searchBtn.addEventListener('click', async () => {
     const query = searchInput.value.trim().toLowerCase();
-    resultsContainer.innerHTML = '';
+    container.innerHTML = ''; // Limpia resultados previos
 
     if (!query) {
         showMessage('Por favor ingresa un nombre para buscar.', 'warning');
@@ -22,10 +39,14 @@ searchBtn.addEventListener('click', async () => {
 
         const characters = await response.json();
 
+        // Aquí characters es un array directo, no tiene 'items'
         if (!Array.isArray(characters) || characters.length === 0) {
             showMessage(`No se encontraron personajes con el nombre "${query}"`, 'info');
             return;
         }
+
+        // Renderizar personajes encontrados
+        renderCharacters(characters);
 
     } catch (error) {
         showMessage('Ocurrió un error al consultar la API. Intenta nuevamente', 'danger');
@@ -33,6 +54,7 @@ searchBtn.addEventListener('click', async () => {
     }
 
 });
+
 
 const showMessage = (message, type = 'info', duration = 2000) => {
     const alertContainer = document.getElementById('alertContainer');
@@ -55,11 +77,75 @@ const showMessage = (message, type = 'info', duration = 2000) => {
 
     // Coloco el fade y remuevo despues del tiempo definido
     setTimeout(() => {
-        alert.classList.remove('show'); 
+        alert.classList.remove('show');
         alert.classList.add('hide');
         setTimeout(() => {
             alert.remove();
         }, 500);
     }, duration);
 }
+
+
+const getAllCharacters = async (page = 1) => {
+  if (isLoading || isLastPage) return;
+
+  isLoading = true;
+  try {
+    const response = await fetch(`${API_BASE}?page=${page}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data.items) || data.items.length === 0) {
+      isLastPage = true;
+      return;
+    }
+
+    renderCharacters(data.items, page > 1); // El segundo parámetro indica si se debe agregar o reemplazar
+    currentPage++;
+  } catch (error) {
+    showMessage('Ocurrió un error al obtener los personajes.', 'danger');
+    console.error(error);
+  } finally {
+    isLoading = false;
+  }
+};
+
+
+const renderCharacters = (characters, append = false) => {
+  if (!append) container.innerHTML = '';
+
+  characters.forEach(character => {
+    const col = document.createElement('div');
+    col.className = 'col-md-4 col-lg-3';
+
+    const raceClass = character.race ? character.race.toLowerCase().replace(/\s+/g, '-') : 'unknown';
+
+    col.innerHTML = `
+      <div class="card h-100 shadow-sm border-0 ${raceClass}">
+        <img src="${character.image}" class="card-img-top" alt="${character.name}">
+        <div class="card-gradient"></div>
+        <div class="card-body">
+          <h5 class="card-title">${character.name}</h5>
+          <p class="card-text">${character.race} • ${character.gender}</p>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(col);
+  });
+};
+
+
+
+window.addEventListener('DOMContentLoaded', getAllCharacters);
+window.addEventListener('scroll', () => {
+  const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 300;
+
+  if (nearBottom) {
+    getAllCharacters(currentPage);
+  }
+});
 

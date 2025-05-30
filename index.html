@@ -19,21 +19,26 @@
     <nav class="col-3 mx-auto fixed-top z-1 p-2 mt-4">
 
         <div class="text-center">
-            <img src="assets/img/icon/logo.svg" width="150px" alt="">
+            <img src="assets/img/icon/logo.svg" width="150px" alt="Logo dragon ball">
             <p>WIKI</p>
         </div>
-        
+
         <nav class="main-nav bg-dark rounded-pill mx-auto p-1">
-            <div class="ms-3 justify-content-center">
-                <form class="d-flex" role="search">
-                    <input class="bg-transparent border-0 me-2 flex-fill text-white" type="search" placeholder="Buscar personaje" aria-label="Search" />
-                    <button class="btn-search py-2 px-2 d-flex align-items-center border border-0" type="submit">
-                        <img src="assets/img/icon/search.svg" alt="">
-                    </button>
-                </form>
+            <div class="ms-3 d-flex">
+                <input id="searchInput" class="bg-transparent border-0 me-2 flex-fill text-white" type="search"
+                    placeholder="Buscar personaje" aria-label="Search" />
+                <button id="searchBtn" class="btn-search py-2 px-2 d-flex align-items-center border border-0">
+                    <img src="assets/img/icon/search.svg" alt="Icono de busqueda">
+                </button>
             </div>
         </nav>
+
+        <div id="alertContainer" class="my-2"></div>
     </nav>
+
+    <main>
+        <div id="results" class="row g-4"></div>
+    </main>
 
     <script src="assets/js/script.js"></script>
 </body>

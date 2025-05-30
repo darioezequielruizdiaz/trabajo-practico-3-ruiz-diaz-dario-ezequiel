@@ -25,7 +25,7 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("../img/bg-main-min.jpg");
+    background-image: url("../img/bg-main.jpg");
     background-size: cover;
     background-position-y: -600px;
     background-attachment: fixed;
@@ -173,6 +173,30 @@ body::before {
   background: linear-gradient(135deg, #6b3e6b, #d299d2);
 }
 
-.race-unknown {
+.majin {
+  background: linear-gradient(135deg, #880d1e, #dd2d4a);
+}
+
+.angel {
+  background: linear-gradient(135deg, #274c77, #6096ba);
+}
+
+.god {
+  background: linear-gradient(135deg, #3c096c, #7b2cbf);
+}
+
+.evil {
+  background: linear-gradient(135deg, #89023e, #ea638c);
+}
+
+.nucleico-benigno {
+  background: linear-gradient(135deg, #1f363d, #40798c);
+}
+
+.nucleico {
+  background: linear-gradient(135deg, #3b6064, #55828b);
+}
+
+.unknown {
   background: linear-gradient(135deg, #444444, #777777);
 }

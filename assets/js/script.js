@@ -5,6 +5,7 @@ const searchBtn = document.getElementById('searchBtn');
 const resetBtn = document.getElementById('resetBtn');
 const searchInput = document.getElementById('searchInput');
 const container = document.getElementById('charactersContainer');
+const loader = document.getElementById('loader');
 
 let currentPage = 1;
 let isLoading = false;
@@ -12,77 +13,86 @@ let isLastPage = false;
 
 
 resetBtn.addEventListener('click', async () => {
-    container.innerHTML = ''; // Limpia resultados previos
+  container.innerHTML = ''; // Limpia resultados
 
-    currentPage = 1;
-    isLoading = false;
-    isLastPage = false;
+  currentPage = 1;
+  isLoading = false;
+  isLastPage = false;
 
-    await getAllCharacters();
+  await getAllCharacters();
 });
 
 searchBtn.addEventListener('click', async () => {
-    const query = searchInput.value.trim().toLowerCase();
-    container.innerHTML = ''; // Limpia resultados previos
+  const query = searchInput.value.trim().toLowerCase();
+  container.innerHTML = ''; // Limpia resultados
 
-    if (!query) {
-        showMessage('Por favor ingresa un nombre para buscar.', 'warning');
-        return;
+  if (!query) {
+    showMessage('Por favor ingresa un nombre para buscar.', 'warning');
+    return;
+  }
+
+  isLoading = true;
+  loader.classList.remove('d-none');
+  loader.classList.add('d-block');
+
+  try {
+    const response = await fetch(`${API}${query}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    try {
-        const response = await fetch(`${API}${query}`);
+    const characters = await response.json();
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+    console.log(characters)
 
-        const characters = await response.json();
-
-        // Aquí characters es un array directo, no tiene 'items'
-        if (!Array.isArray(characters) || characters.length === 0) {
-            showMessage(`No se encontraron personajes con el nombre "${query}"`, 'info');
-            return;
-        }
-
-        // Renderizar personajes encontrados
-        renderCharacters(characters);
-
-    } catch (error) {
-        showMessage('Ocurrió un error al consultar la API. Intenta nuevamente', 'danger');
-        console.error(error);
+    if (!Array.isArray(characters) || characters.length === 0) {
+      showMessage(`No se encontraron personajes con el nombre "${query}"`, 'info');
+      return;
     }
+
+    // Renderizar personajes encontrados
+    renderCharacters(characters);
+
+  } catch (error) {
+    showMessage('Ocurrió un error al consultar la API. Intenta nuevamente', 'danger');
+    console.error(error);
+  } finally {
+    isLoading = false;
+    loader.classList.remove('d-block');
+    loader.classList.add('d-none');
+  }
 
 });
 
 
 const showMessage = (message, type = 'info', duration = 2000) => {
-    const alertContainer = document.getElementById('alertContainer');
+  const alertContainer = document.getElementById('alertContainer');
 
-    // Alerta base
-    const alert = document.createElement('div');
-    alert.className = `alert alert-${type} shadow-sm border-0 rounded-3 py-2 px-3 main-alert text-center`;
-    alert.role = 'alert';
-    alert.innerText = message;
+  // Alerta base
+  const alert = document.createElement('div');
+  alert.className = `alert alert-${type} shadow-sm border-0 rounded-3 py-2 px-3 main-alert text-center`;
+  alert.role = 'alert';
+  alert.innerText = message;
 
 
-    alertContainer.innerHTML = '';
-    alertContainer.appendChild(alert);
+  alertContainer.innerHTML = '';
+  alertContainer.appendChild(alert);
 
-    // Forzar reflow para el cambio
-    void alert.offsetWidth;
+  // Forzar reflow para el cambio
+  void alert.offsetWidth;
 
-    // Agregar clase para mostrar el fade
-    alert.classList.add('show');
+  // Agregar clase para mostrar el fade
+  alert.classList.add('show');
 
-    // Coloco el fade y remuevo despues del tiempo definido
+  // Coloco el fade y remuevo despues del tiempo definido
+  setTimeout(() => {
+    alert.classList.remove('show');
+    alert.classList.add('hide');
     setTimeout(() => {
-        alert.classList.remove('show');
-        alert.classList.add('hide');
-        setTimeout(() => {
-            alert.remove();
-        }, 500);
-    }, duration);
+      alert.remove();
+    }, 500);
+  }, duration);
 }
 
 
@@ -90,6 +100,8 @@ const getAllCharacters = async (page = 1) => {
   if (isLoading || isLastPage) return;
 
   isLoading = true;
+  loader.classList.remove('d-none');
+  loader.classList.add('d-block');
   try {
     const response = await fetch(`${API_BASE}?page=${page}`);
     if (!response.ok) {
@@ -110,6 +122,8 @@ const getAllCharacters = async (page = 1) => {
     console.error(error);
   } finally {
     isLoading = false;
+    loader.classList.remove('d-block');
+    loader.classList.add('d-none');
   }
 };
 
@@ -131,6 +145,9 @@ const renderCharacters = (characters, append = false) => {
           <h5 class="card-title">${character.name}</h5>
           <p class="card-text">${character.race} • ${character.gender}</p>
         </div>
+        <button type="button" class="border-0 rounded-0 py-2 ${raceClass} text-white" data-id=${character.id}>
+          Mas información
+        </button>
       </div>
     `;
 
